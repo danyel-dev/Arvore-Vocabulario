@@ -1,0 +1,11 @@
+﻿%Unidade 1
+red: vermelho
+boy: garoto, menino
+house: casa
+%Unidade 2
+apple: maçã
+home: casa, lar
+computer: computador, PC
+%Unidade 3
+news: noticia
+water: agua
