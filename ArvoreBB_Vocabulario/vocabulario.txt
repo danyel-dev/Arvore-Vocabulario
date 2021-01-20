@@ -5,7 +5,7 @@ house: casa
 %Unidade 2
 apple: maçã
 home: casa, lar
-computer: computador, PC
+computer: computador, pc
 %Unidade 3
 news: noticia
 water: agua
