@@ -14,7 +14,7 @@ int main() {
 
     // inserção na árvore
     while (fgets(frase, 1000, fptr) != NULL) 
-        if (frase[0] != '%' && frase[3] != '%') 
+        if (frase[0] != '%' && frase[3] != '%')  
             divide_palavras(&Raiz, frase);   
 
 

@@ -136,51 +136,55 @@ Vocabulario *insere_palavra(Vocabulario **pai, Vocabulario **Raiz, char p_portug
 
     if (*Raiz == NULL)
         *Raiz = alocaNo(p_portug, NULL, NULL);
-
     else {
-        if (folha(*Raiz)) {
-            if ((**Raiz).nChaves == 1) {
-                *Raiz = adicionaNo(*Raiz, p_portug, NULL);
-                novo = NULL;
-            } else {
-                novo = quebraNo(Raiz, NULL, p_portug, infomeio);
-                
-                if (pai == NULL) {
-                    *Raiz = alocaNo(infomeio, *Raiz, novo);
-                    novo = NULL; 
-			    }
-            }
-
-        } else {
-            int x = strcmp(p_portug, (**Raiz).Palavra1);
-            int y = strcmp(p_portug, (**Raiz).Palavra2);
-
-            if (x < 0) 
-                novo = insere_palavra(*Raiz, &(**Raiz).esq, p_portug, infomeio);
-    
-            else if ((**Raiz).nChaves == 1 || y < 0) 
-                novo = insere_palavra(*Raiz, &(**Raiz).centro, p_portug, infomeio);
-
-            else 
-                novo = insere_palavra(*Raiz, &(**Raiz).dir, p_portug, infomeio);
-
-            if (novo != NULL) {
+        int x = strcmp(p_portug, (**Raiz).Palavra1);
+        int y = strcmp(p_portug, (**Raiz).Palavra2);
+        
+        if (x == 0 || y == 0) 
+            novo = NULL;
+        else {
+            if (folha(*Raiz)) {
                 if ((**Raiz).nChaves == 1) {
-                    Raiz = adicionaNo(*Raiz, infomeio, novo);
+                    *Raiz = adicionaNo(*Raiz, p_portug, NULL);
                     novo = NULL;
                 } else {
-                    char auxMeio[30];
-                    strcpy(auxMeio, infomeio);
-
-                    novo = quebraNo(Raiz, novo, auxMeio, infomeio);
-                
+                    novo = quebraNo(Raiz, NULL, p_portug, infomeio);
+                    
                     if (pai == NULL) {
                         *Raiz = alocaNo(infomeio, *Raiz, novo);
                         novo = NULL; 
                     }
                 }
-            }
+            } 
+            
+            else {
+                if (x < 0) 
+                    novo = insere_palavra(*Raiz, &(**Raiz).esq, p_portug, infomeio);
+        
+                else if ((**Raiz).nChaves == 1 || y < 0) 
+                    novo = insere_palavra(*Raiz, &(**Raiz).centro, p_portug, infomeio);
 
+                else 
+                    novo = insere_palavra(*Raiz, &(**Raiz).dir, p_portug, infomeio);
+                
+
+                if (novo != NULL) {
+                    if ((**Raiz).nChaves == 1) {
+                        Raiz = adicionaNo(*Raiz, infomeio, novo);
+                        novo = NULL;
+                    } else {
+                        char auxMeio[30];
+                        strcpy(auxMeio, infomeio);
+
+                        novo = quebraNo(Raiz, novo, auxMeio, infomeio);
+                    
+                        if (pai == NULL) {
+                            *Raiz = alocaNo(infomeio, *Raiz, novo);
+                            novo = NULL; 
+                        }
+                    }
+                }
+            }
         }
     }
 
