@@ -17,6 +17,9 @@ struct Vocabulario {
 };
 
 
+Vocabulario *insere_palavra(Vocabulario **pai, Vocabulario **Raiz, char p_portug[], char infomeio[]);
+
+
 void divide_palavras(Vocabulario **Raiz, char frase[]) {
     int cont = 0, i;
     char p_ingles[30], p_portug[30];
@@ -128,7 +131,7 @@ Vocabulario *quebraNo(Vocabulario **Raiz, Vocabulario *NovoNo, char Palavra1[], 
 }
 
 
-void insere_palavra(Vocabulario **pai, Vocabulario **Raiz, char p_portug[], char infomeio[]) {
+Vocabulario *insere_palavra(Vocabulario **pai, Vocabulario **Raiz, char p_portug[], char infomeio[]) {
     Vocabulario *novo;
 
     if (*Raiz == NULL)
@@ -148,35 +151,48 @@ void insere_palavra(Vocabulario **pai, Vocabulario **Raiz, char p_portug[], char
 			    }
             }
 
-        // } else {
-        //     if (info < (**Raiz).chaveEsq)
-        //         novo = insere23(*Raiz, &(**Raiz).esq, info, infoMeio);
+        } else {
+            int x = strcmp(p_portug, (**Raiz).Palavra1);
+            int y = strcmp(p_portug, (**Raiz).Palavra2);
 
-        //     else if ((**Raiz).nChaves == 1) 
-        //         novo = insere23(*Raiz, &(**Raiz).centro, info, infoMeio);
+            if (x < 0) 
+                novo = insere_palavra(*Raiz, &(**Raiz).esq, p_portug, infomeio);
+    
+            else if ((**Raiz).nChaves == 1 || y < 0) 
+                novo = insere_palavra(*Raiz, &(**Raiz).centro, p_portug, infomeio);
 
-        //     else if (info < (**Raiz).chaveDir) 
-        //         novo = insere23(*Raiz, &(**Raiz).centro, info, infoMeio);
-            
-        //     else 
-        //         novo = insere23(*Raiz, &(**Raiz).dir, info, infoMeio);
+            else 
+                novo = insere_palavra(*Raiz, &(**Raiz).dir, p_portug, infomeio);
 
-        //     if (novo != NULL) {
-        //         if ((**Raiz).nChaves == 1) {
-        //             Raiz = adicionaNo(*Raiz, *infoMeio, novo);
-        //             novo = NULL;
-        //         } else {
-        //             novo = quebraNo(Raiz, novo, *infoMeio, infoMeio);
+            if (novo != NULL) {
+                if ((**Raiz).nChaves == 1) {
+                    Raiz = adicionaNo(*Raiz, infomeio, novo);
+                    novo = NULL;
+                } else {
+                    char auxMeio[30];
+                    strcpy(auxMeio, infomeio);
+
+                    novo = quebraNo(Raiz, novo, auxMeio, infomeio);
                 
-        //             if (pai == NULL) {
-        //                 *Raiz = criaNO(*infoMeio, *Raiz, novo);
-        //                 novo = NULL; 
-        //             }
-        //         }
-        //     }
+                    if (pai == NULL) {
+                        *Raiz = alocaNo(infomeio, *Raiz, novo);
+                        novo = NULL; 
+                    }
+                }
+            }
 
         }
     }
 
     return novo;
+}
+
+
+void imprime_vocabulario(Vocabulario *Raiz) {
+    if (Raiz != NULL) {
+        printf("%s %s %d\n", (*Raiz).Palavra1, (*Raiz).Palavra2, (*Raiz).nChaves);
+        imprime_vocabulario(Raiz->esq);
+        imprime_vocabulario(Raiz->centro);
+        imprime_vocabulario(Raiz->dir);
+    }
 }
