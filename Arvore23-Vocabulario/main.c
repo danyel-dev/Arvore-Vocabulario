@@ -17,6 +17,7 @@ int main() {
         if (frase[0] != '%' && frase[3] != '%') 
             divide_palavras(&Raiz, frase);   
 
+    printf("%d\n", (*Raiz).centro->nChaves);
 
     return 0;
 }
