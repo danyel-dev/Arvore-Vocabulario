@@ -17,8 +17,7 @@ int main() {
         if (frase[0] != '%' && frase[3] != '%')  
             divide_palavras(&Raiz, frase);   
 
-
-    imprime_vocabulario(Raiz);
+    printf("%s\n", (*Raiz).chaveEsq->Significados->palavra_Engles);
 
     return 0;
 }
