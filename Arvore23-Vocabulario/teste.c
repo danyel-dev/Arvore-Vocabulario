@@ -124,36 +124,36 @@ int folha(Vocabulario *Raiz) {
 }
 
 
-// Vocabulario *quebraNo(Vocabulario **Raiz, Vocabulario *NovoNo, char Palavra1[], char infoMeio[]) {
-//     Vocabulario *Novo;
+Vocabulario *quebraNo(Vocabulario **Raiz, Vocabulario *NovoNo, char Palavra1[], char infoMeio[]) {
+    Vocabulario *Novo;
 
-//     int x = strcmp(Palavra1, (**Raiz).Palavra2);
-//     int y = strcmp(Palavra1, (**Raiz).Palavra1);
+    int x = strcmp(Palavra1, (**Raiz).Palavra2);
+    int y = strcmp(Palavra1, (**Raiz).Palavra1);
     
-//     if (x > 0) {
-//         strcpy(infoMeio, (**Raiz).Palavra2);
-//         Novo = alocaNo(Palavra1, (**Raiz).dir, NovoNo);
-//     } 
+    if (x > 0) {
+        strcpy(infoMeio, (**Raiz).Palavra2);
+        Novo = alocaNo(Palavra1, (**Raiz).dir, NovoNo);
+    } 
 
-//     else if (y < 0) {
-//         strcpy(infoMeio, (**Raiz).Palavra1);
-//         Novo = alocaNo((**Raiz).Palavra2, (**Raiz).centro, (**Raiz).dir);
+    else if (y < 0) {
+        strcpy(infoMeio, (**Raiz).Palavra1);
+        Novo = alocaNo((**Raiz).Palavra2, (**Raiz).centro, (**Raiz).dir);
         
-//         strcpy((**Raiz).Palavra1, Palavra1);
-//         (**Raiz).centro = NovoNo;
-//     }
+        strcpy((**Raiz).Palavra1, Palavra1);
+        (**Raiz).centro = NovoNo;
+    }
 
-//     else {
-//         strcpy(infoMeio, Palavra1);
-//         Novo = alocaNo((**Raiz).Palavra2, NovoNo, (**Raiz).dir);  
-//     }
+    else {
+        strcpy(infoMeio, Palavra1);
+        Novo = alocaNo((**Raiz).Palavra2, NovoNo, (**Raiz).dir);  
+    }
 
-//     strcpy((**Raiz).Palavra2, "EOF");
-//     (**Raiz).nChaves = 1;
-//     (**Raiz).dir = NULL; 
+    strcpy((**Raiz).Palavra2, "EOF");
+    (**Raiz).nChaves = 1;
+    (**Raiz).dir = NULL; 
 
-//     return Novo;
-// }
+    return Novo;
+}
 
 
 Vocabulario *insere_palavra(Vocabulario **pai, Vocabulario **Raiz, char p_portug[], char p_ingles[], char infomeio[]) {

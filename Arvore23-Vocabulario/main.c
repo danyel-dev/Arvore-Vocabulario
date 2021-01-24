@@ -20,11 +20,39 @@ int main() {
             cont++;
         }
 
-        if (cont == 2) 
+        if (cont == 1) 
             break;
     }
 
-    // printf("%s\n", (*Raiz).chaveDir->Palavra);
+    imprime_palavras(Raiz);
 
     return 0;
+}
+
+void imprime_palavras(Vocabulario *Raiz) {
+    if (Raiz != NULL) {
+        printf("%s %s %d: ", Raiz->chaveEsq->Palavra, Raiz->chaveDir->Palavra, Raiz->nChaves);
+        imprime_lista(Raiz);
+        imprime_palavras(Raiz->esq);
+        imprime_palavras(Raiz->centro);
+        imprime_palavras(Raiz->dir);
+    }
+}
+
+void imprime_lista(Vocabulario *Raiz) {
+    listaIngles *aux = Raiz->chaveEsq->Significados;
+
+    if (aux != NULL) {
+        printf("%s ", aux->palavra_Engles);
+        aux = aux->prox;
+    }
+
+    aux = Raiz->chaveDir->Significados;
+
+    if (aux != NULL) {
+        printf("%s ", aux->palavra_Engles);
+        aux = aux->prox;
+    }
+
+    printf("\n");
 }

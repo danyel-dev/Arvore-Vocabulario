@@ -23,6 +23,10 @@ struct Vocabulario {
 };
 
 
+listaIngles *copia_dados(listaIngles *Significados_Dir, listaIngles *Significados_Esq);
+listaIngles *insere_lista(listaIngles *Significados, char p_ingles[]);
+Vocabulario *insere_palavra(Vocabulario *pai, Vocabulario **Raiz, char palavra[], char significado[], chave *infoMeio);
+
 void divide_palavras(Vocabulario **Raiz, char frase[]) {
     int cont = 0, i;
     char p_ingles[30], p_portug[30];
@@ -45,7 +49,9 @@ void divide_palavras(Vocabulario **Raiz, char frase[]) {
             p_portug[cont] = '\0';
             cont = 0;
 
-            chave *infoMeio = NULL;
+            chave *infoMeio = (chave*) malloc(sizeof(chave));
+            strcpy((*infoMeio).Palavra, "EOF");
+            (*infoMeio).Significados = NULL;
             insere_palavra(NULL, Raiz, p_portug, p_ingles, infoMeio);
         } 
 
@@ -57,35 +63,17 @@ void divide_palavras(Vocabulario **Raiz, char frase[]) {
 }
 
 
-listaIngles *insere_lista(listaIngles *Significados, char p_ingles[]) {
-    printf("oi\n");
-    listaIngles *No = (listaIngles*) malloc(sizeof(listaIngles));
-
-    strcpy((*No).palavra_Engles, p_ingles);
-    (*No).prox = NULL;    
-    
-    if (Significados == NULL) {
-        return No;
-    } else {
-        listaIngles *aux = Significados;
-
-        while (aux->prox != NULL) 
-            aux = aux->prox;
-
-        aux->prox = No;
-        return Significados;
-    } 
-}
-
-
-Vocabulario *alocaNo(Vocabulario palavra[], char significado[], Vocabulario *noEsq, Vocabulario *noCentro) {
+Vocabulario *alocaNo(chave *info, Vocabulario *noEsq, Vocabulario *noCentro) {
     Vocabulario *No = (Vocabulario*) malloc(sizeof(Vocabulario));
     
     (*No).chaveEsq = (chave*) malloc(sizeof(chave));
-    (*No).chaveDir = NULL;
+    (*No).chaveDir = (chave*) malloc(sizeof(chave));
 
-    strcpy((*No).chaveEsq->Palavra, palavra);
-    (*No).chaveEsq->Significados = insere_lista((*No).chaveEsq->Significados, significado); 
+    strcpy((*No).chaveEsq->Palavra, (*info).Palavra);
+    (*No).chaveEsq->Significados = copia_dados((*No).chaveEsq->Significados, (*info).Significados);
+
+    strcpy((*No).chaveDir->Palavra, "EOF");
+    (*No).chaveDir->Significados = NULL;
 
     (*No).nChaves = 1;
     (*No).esq = noEsq;
@@ -109,25 +97,23 @@ listaIngles *copia_dados(listaIngles *Significados_Dir, listaIngles *Significado
 }
 
 
-Vocabulario *adicionaNo(Vocabulario *Raiz, char palavra[], char significado[], Vocabulario *Novo) {
-    int n = strcmp(palavra, (*Raiz).chaveEsq->Palavra);
-
-    (*Raiz).chaveDir = (chave*) malloc(sizeof(chave));
+Vocabulario *adicionaNo(Vocabulario *Raiz, chave *info, Vocabulario *Novo) {
+    int n = strcmp((*info).Palavra, (*Raiz).chaveEsq->Palavra);
 
     if (n > 0) {
-        strcpy((*Raiz).chaveDir->Palavra, palavra);
-        (*Raiz).chaveDir->Significados = insere_lista((*Raiz).chaveDir->Significados, significado);
+        strcpy((*Raiz).chaveDir->Palavra, (*info).Palavra);
+        (*Raiz).chaveDir->Significados = copia_dados((*Raiz).chaveDir->Significados, (*info).Significados);
         (*Raiz).dir = Novo;
     } 
 
     else if (n < 0) {
         strcpy((*Raiz).chaveDir->Palavra, (*Raiz).chaveEsq->Palavra);
-        strcpy((*Raiz).chaveEsq->Palavra, palavra);
+        strcpy((*Raiz).chaveEsq->Palavra, (*info).Palavra);
         
         (*Raiz).chaveDir->Significados = copia_dados((*Raiz).chaveDir->Significados, (*Raiz).chaveEsq->Significados);
         
         (*Raiz).chaveEsq->Significados = NULL;
-        (*Raiz).chaveEsq->Significados = insere_lista((*Raiz).chaveEsq->Significados, significado);
+        (*Raiz).chaveEsq->Significados = copia_dados((*Raiz).chaveEsq->Significados, (*info).Significados);
         (*Raiz).dir = (*Raiz).centro;
         (*Raiz).centro = Novo;
     } 
@@ -147,34 +133,162 @@ int folha(Vocabulario *Raiz) {
 }
 
 
-void insere_palavra(Vocabulario *pai, Vocabulario **Raiz, char palavra[], char significado[], chave *infoMeio) {
+listaIngles *insere_lista(listaIngles *Significados, char p_ingles[]) {
+    listaIngles *No = (listaIngles*) malloc(sizeof(listaIngles));
+    strcpy((*No).palavra_Engles, p_ingles);
+    (*No).prox = NULL;    
+    
+    if (Significados == NULL) {
+        return No;
+    } else {
+        listaIngles *aux = Significados;
+
+        while (aux->prox != NULL) 
+            aux = aux->prox;
+
+        aux->prox = No;
+        return Significados;
+    } 
+}
+
+
+Vocabulario *quebraNo(Vocabulario **Raiz, Vocabulario *NovoNo, chave *info, chave *infoMeio) {
+    Vocabulario *Novo;
+
+    int x = strcmp((*info).Palavra, (**Raiz).chaveDir->Palavra);
+    int y = strcmp((*info).Palavra, (**Raiz).chaveEsq->Palavra);
+    
+    if (x > 0) {
+        strcpy((*infoMeio).Palavra, (**Raiz).chaveDir->Palavra);
+        (*infoMeio).Significados = copia_dados((*infoMeio).Significados, (**Raiz).chaveDir->Significados);
+
+        chave *info2 = (chave*) malloc(sizeof(chave));
+        strcpy((*info2).Palavra, (*info).Palavra); 
+        (*info2).Significados = NULL;
+        (*info2).Significados = copia_dados((*info2).Significados, (*info).Significados);
+
+        Novo = alocaNo(info2, (**Raiz).dir, NovoNo);
+    } 
+
+    else if (y < 0) {
+        strcpy((*infoMeio).Palavra, (**Raiz).chaveEsq->Palavra);
+        (*infoMeio).Significados = copia_dados((*infoMeio).Significados, (**Raiz).chaveEsq->Significados);
+
+        chave *info2 = (chave*) malloc(sizeof(chave));
+        strcpy((*info2).Palavra, (**Raiz).chaveDir->Palavra); 
+        (*info2).Significados = NULL;
+        (*info2).Significados = copia_dados((*info2).Significados, (**Raiz).chaveDir->Significados);
+
+        Novo = alocaNo(info2, (**Raiz).centro, (**Raiz).dir);
+        
+        strcpy((**Raiz).chaveEsq->Palavra, (*info).Palavra);
+        (**Raiz).chaveEsq->Significados = copia_dados((**Raiz).chaveEsq->Significados, (*info).Significados); 
+        (**Raiz).centro = NovoNo;
+    }
+
+    else {
+        strcpy(infoMeio, (*info).Palavra);
+        (*infoMeio).Significados = copia_dados((*infoMeio).Significados, (*info).Significados);
+
+        chave *info2 = (chave*) malloc(sizeof(chave));
+        strcpy((*info2).Palavra, (**Raiz).chaveDir->Palavra); 
+        (*info2).Significados = NULL;
+        (*info2).Significados = copia_dados((*info2).Significados, (**Raiz).chaveDir->Significados);
+
+        Novo = alocaNo(info2, NovoNo, (**Raiz).dir);  
+    }
+
+    strcpy((**Raiz).chaveDir->Palavra, "EOF");
+    (**Raiz).nChaves = 1;
+    (**Raiz).dir = NULL; 
+
+    return Novo;
+}
+
+
+Vocabulario *insere_palavra(Vocabulario *pai, Vocabulario **Raiz, char palavra[], char significado[], chave *infoMeio) {
     Vocabulario *novo;
 
-    if (*Raiz == NULL) 
-        *Raiz = alocaNo(palavra, significado, NULL, NULL);
+    if (*Raiz == NULL) {
+        chave *info = (chave*) malloc(sizeof(chave));
+        strcpy((*info).Palavra, palavra); 
+        (*info).Significados = NULL;
+        (*info).Significados = insere_lista((*info).Significados, significado);
+
+        *Raiz = alocaNo(info, NULL, NULL);
+    }
     else {
-        int x, y;
-        x = strcmp(palavra, (**Raiz).chaveEsq->Palavra);
-        
-        if ((**Raiz).chaveDir != NULL)
-            y = strcmp(palavra, (**Raiz).chaveDir->Palavra);
+        int x = strcmp(palavra, (**Raiz).chaveEsq->Palavra);
+        int y = strcmp(palavra, (**Raiz).chaveDir->Palavra);
         
         if (x == 0) {
+            (**Raiz).chaveEsq->Significados = insere_lista((**Raiz).chaveEsq->Significados, significado);
             novo = NULL;
         } 
         
         else if (y == 0) {
+            (**Raiz).chaveDir->Significados = insere_lista((**Raiz).chaveDir->Significados, significado); 
             novo = NULL;
         } 
-        
+         
         else {
             if (folha(*Raiz)) {
                 if ((**Raiz).nChaves == 1) {
-                    *Raiz = adicionaNo(*Raiz, palavra, significado, NULL);
+                    chave *info = (chave*) malloc(sizeof(chave));
+                    strcpy((*info).Palavra, palavra); 
+                    (*info).Significados = NULL;
+                    (*info).Significados = insere_lista((*info).Significados, significado);
+              
+                    *Raiz = adicionaNo(*Raiz, info, NULL);
                     novo = NULL;
-                } 
+                } else {
+                    chave *info = (chave*) malloc(sizeof(chave));
+                    strcpy((*info).Palavra, palavra); 
+                    (*info).Significados = NULL;
+                    (*info).Significados = insere_lista((*info).Significados, significado);
+                    
+                    novo = quebraNo(Raiz, NULL, info, infoMeio);
+
+                    if (pai == NULL) {
+                        *Raiz = alocaNo(infoMeio, *Raiz, novo);
+                        novo = NULL; 
+                    }
+                }
             }
-        } 
+
+            else {
+                if (x < 0) 
+                    novo = insere_palavra(*Raiz, &(**Raiz).esq, palavra, significado, infoMeio);
+        
+                else if ((**Raiz).nChaves == 1 || y < 0) 
+                    novo = insere_palavra(*Raiz, &(**Raiz).centro, palavra, significado, infoMeio);
+
+                else 
+                    novo = insere_palavra(*Raiz, &(**Raiz).dir, palavra, significado, infoMeio);
+                
+
+                if (novo != NULL) {
+                    if ((**Raiz).nChaves == 1) {
+                        Raiz = adicionaNo(*Raiz, infoMeio, novo);
+                        novo = NULL;
+                    } else {
+                        chave *info = (chave*) malloc(sizeof(chave));
+                        strcpy((*info).Palavra, (*infoMeio).Palavra); 
+                        (*info).Significados = NULL;
+                        (*info).Significados = copia_dados((*info).Significados, (*info).Significados);
+                        
+                        novo = quebraNo(Raiz, novo, info, infoMeio);
+                    
+                        if (pai == NULL) {
+                            *Raiz = alocaNo(infoMeio, *Raiz, novo);
+                            novo = NULL; 
+                        }
+                    }
+                }
+            }
+        }
+
     }
-    
+
+    return novo;
 }
