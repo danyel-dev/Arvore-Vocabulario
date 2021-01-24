@@ -13,11 +13,18 @@ int main() {
     inicio = clock();
 
     // inserção na árvore
-    while (fgets(frase, 1000, fptr) != NULL) 
-        if (frase[0] != '%' && frase[3] != '%')  
+    int cont = 0;
+    while (fgets(frase, 1000, fptr) != NULL) {
+        if (frase[0] != '%' && frase[3] != '%') {  
             divide_palavras(&Raiz, frase);   
+            cont++;
+        }
 
-    printf("%s\n", (*Raiz).chaveEsq->Significados->palavra_Engles);
+        if (cont == 2) 
+            break;
+    }
+
+    // printf("%s\n", (*Raiz).chaveDir->Palavra);
 
     return 0;
 }

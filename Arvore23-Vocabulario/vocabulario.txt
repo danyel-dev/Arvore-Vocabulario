@@ -1,6 +1,6 @@
 ﻿%Unidade 1
 red: vermelho
-boy: garoto, menino
+boy: garoto, vermelho
 house: casa
 %Unidade 2
 apple: maçã

@@ -58,14 +58,15 @@ void divide_palavras(Vocabulario **Raiz, char frase[]) {
 
 
 listaIngles *insere_lista(listaIngles *Significados, char p_ingles[]) {
+    printf("oi\n");
     listaIngles *No = (listaIngles*) malloc(sizeof(listaIngles));
-    
+
     strcpy((*No).palavra_Engles, p_ingles);
     (*No).prox = NULL;    
     
-    if (Significados == NULL) 
+    if (Significados == NULL) {
         return No;
-    else {
+    } else {
         listaIngles *aux = Significados;
 
         while (aux->prox != NULL) 
@@ -95,23 +96,85 @@ Vocabulario *alocaNo(Vocabulario palavra[], char significado[], Vocabulario *noE
 }
 
 
+listaIngles *copia_dados(listaIngles *Significados_Dir, listaIngles *Significados_Esq) {
+    listaIngles *aux = Significados_Esq;
+    Significados_Dir = NULL;
+
+    while (aux != NULL) {
+        Significados_Dir = insere_lista(Significados_Dir, aux->palavra_Engles);
+        aux = aux->prox;    
+    }
+
+    return Significados_Dir;
+}
+
+
+Vocabulario *adicionaNo(Vocabulario *Raiz, char palavra[], char significado[], Vocabulario *Novo) {
+    int n = strcmp(palavra, (*Raiz).chaveEsq->Palavra);
+
+    (*Raiz).chaveDir = (chave*) malloc(sizeof(chave));
+
+    if (n > 0) {
+        strcpy((*Raiz).chaveDir->Palavra, palavra);
+        (*Raiz).chaveDir->Significados = insere_lista((*Raiz).chaveDir->Significados, significado);
+        (*Raiz).dir = Novo;
+    } 
+
+    else if (n < 0) {
+        strcpy((*Raiz).chaveDir->Palavra, (*Raiz).chaveEsq->Palavra);
+        strcpy((*Raiz).chaveEsq->Palavra, palavra);
+        
+        (*Raiz).chaveDir->Significados = copia_dados((*Raiz).chaveDir->Significados, (*Raiz).chaveEsq->Significados);
+        
+        (*Raiz).chaveEsq->Significados = NULL;
+        (*Raiz).chaveEsq->Significados = insere_lista((*Raiz).chaveEsq->Significados, significado);
+        (*Raiz).dir = (*Raiz).centro;
+        (*Raiz).centro = Novo;
+    } 
+
+    (*Raiz).nChaves = 2;
+    return Raiz;
+}
+
+
+int folha(Vocabulario *Raiz) {
+    int folha = 0;
+
+    if ((*Raiz).esq == NULL && (*Raiz).centro == NULL && (*Raiz).dir == NULL)
+        folha = 1;
+    
+    return folha;
+}
+
+
 void insere_palavra(Vocabulario *pai, Vocabulario **Raiz, char palavra[], char significado[], chave *infoMeio) {
     Vocabulario *novo;
 
     if (*Raiz == NULL) 
         *Raiz = alocaNo(palavra, significado, NULL, NULL);
     else {
-        if (folha(*Raiz)) {
-            if ((**Raiz).nChaves == 1) {
-                *Raiz = adicionaNo(*Raiz, palavra, significado, NULL);
-                novo = NULL;
-            } // else {
-            //     novo = quebraNo(Raiz, NULL, p_portug, infomeio);
-                
-            //     if (pai == NULL) {
-            //         *Raiz = alocaNo(infomeio, *Raiz, novo);
-            //         novo = NULL; 
-            //     }
-            // }
+        int x, y;
+        x = strcmp(palavra, (**Raiz).chaveEsq->Palavra);
+        
+        if ((**Raiz).chaveDir != NULL)
+            y = strcmp(palavra, (**Raiz).chaveDir->Palavra);
+        
+        if (x == 0) {
+            novo = NULL;
         } 
+        
+        else if (y == 0) {
+            novo = NULL;
+        } 
+        
+        else {
+            if (folha(*Raiz)) {
+                if ((**Raiz).nChaves == 1) {
+                    *Raiz = adicionaNo(*Raiz, palavra, significado, NULL);
+                    novo = NULL;
+                } 
+            }
+        } 
+    }
+    
 }
