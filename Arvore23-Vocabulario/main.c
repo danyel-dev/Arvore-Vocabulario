@@ -13,46 +13,32 @@ int main() {
     inicio = clock();
 
     // inserção na árvore
-    int cont = 0;
-    while (fgets(frase, 1000, fptr) != NULL) {
-        if (frase[0] != '%' && frase[3] != '%') {  
+    while (fgets(frase, 1000, fptr) != NULL) 
+        if (frase[0] != '%' && frase[3] != '%') 
             divide_palavras(&Raiz, frase);   
-            cont++;
-        }
 
-        if (cont == 1) 
-            break;
-    }
+    fim = clock();
 
+    printf("Tempo de inserção na árvore: %d\n\n", (fim - inicio) * 1000000);
+
+    // impressão da árvore
     imprime_palavras(Raiz);
+    printf("\n");
 
-    return 0;
-}
+    // Busca na árvore
+    char palavra[30];
 
-void imprime_palavras(Vocabulario *Raiz) {
-    if (Raiz != NULL) {
-        printf("%s %s %d: ", Raiz->chaveEsq->Palavra, Raiz->chaveDir->Palavra, Raiz->nChaves);
-        imprime_lista(Raiz);
-        imprime_palavras(Raiz->esq);
-        imprime_palavras(Raiz->centro);
-        imprime_palavras(Raiz->dir);
-    }
-}
+    printf("Digite uma palavra para buscar: ");
+    scanf("%s", palavra);
 
-void imprime_lista(Vocabulario *Raiz) {
-    listaIngles *aux = Raiz->chaveEsq->Significados;
-
-    if (aux != NULL) {
-        printf("%s ", aux->palavra_Engles);
-        aux = aux->prox;
-    }
-
-    aux = Raiz->chaveDir->Significados;
-
-    if (aux != NULL) {
-        printf("%s ", aux->palavra_Engles);
-        aux = aux->prox;
-    }
+    inicio = clock();
+    int n = busca(Raiz, palavra);
+    fim = clock();
 
     printf("\n");
+    if (n == 0) 
+        printf("palavra não encontrada\n");
+    printf("Tempo de busca na árvore: %d\n", (fim - inicio) * 1000000);
+    
+    return 0;
 }
